@@ -105,7 +105,30 @@ function ingresarUsuario(req, res)
     );
 }
 
+function actualizarUsuario(req, res)
+{
+    var idUsuario = req.params.id;
+    var actualizar = req.body;
+    Usuario.findByIdAndUpdate(idUsuario, actualizar, (err, usuarioActualizado) =>
+        {
+            if (err) 
+            {
+                res.status(500).send({mensaje: 'Error al actualizar al usuario'});    
+            } else 
+            {
+                if(!usuarioActualizado)
+                {
+                    res.status(404).send({mensaje: 'No se logró la actualización del usuario'});
+                } else
+                {
+                    res.status(200).send({usuario: usuarioActualizado});
+                }
+            }
+        }
+    );
+}
+
 module.exports =
     {
-        pruebas, guardarUsuario, ingresarUsuario
+        pruebas, guardarUsuario, ingresarUsuario, actualizarUsuario
     };

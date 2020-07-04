@@ -5,6 +5,7 @@ var app = require('./app');
 var port = process.env.port || 5000;
 
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);
 mongoose.connect('mongodb://localhost:27017/controlganadosv', {useNewUrlParser: true, useUnifiedTopology: true,}, (err, res) =>
     {
         if (err) 
