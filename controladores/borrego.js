@@ -55,7 +55,13 @@ function obtenerBorrego(req, res)
                 res.status(500).send({mensaje: 'El servidor envió un error desconocido...'});
             } else 
             {
-                
+                if (!borrego) 
+                {
+                    res.status(404).send({mensaje: 'No se encontró el identificador de ganado...'});
+                } else 
+                {
+                    res.status(200).send(borrego);
+                }
             }
         }
     );
