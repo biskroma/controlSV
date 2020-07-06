@@ -67,8 +67,31 @@ function obtenerBorrego(req, res)
     );
 }
 
+function obtenerArete(req, res)
+{
+    var tatuajeBorrego = req.params.tatuaje;
+    Borrego.find({_tatuaje:tatuajeBorrego}, (err, borrego)=>
+        {
+            if (err) 
+            {
+                res.status(500).send({mensaje: 'Ocurrió un error de conexión con la base de datos...'});
+            } else 
+            {
+                if (!borrego) 
+                {
+                    res.status(404).send({mensaje: 'No se encontró el identificador de arete..'});
+                } else 
+                {
+                    res.status(200).send(borrego);
+                }
+            }
+        }
+    );
+}
+
 module.exports =
     {
         guardarBorrego,
-        obtenerBorrego
+        obtenerBorrego,
+        obtenerArete
     }
