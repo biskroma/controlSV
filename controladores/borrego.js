@@ -2,6 +2,7 @@
 
 var path = require('path');
 var fs = require('fs');
+var mongoosePaginate = require('mongoose-pagination');
 var Borrego = require('../modelos/borrego');
 
 function guardarBorrego(req, res)
@@ -67,10 +68,10 @@ function obtenerBorrego(req, res)
     );
 }
 
-function obtenerArete(req, res)
+function obtenerTatuaje(req, res)
 {
     var tatuajeBorrego = req.params.tatuaje;
-    Borrego.find({_tatuaje:tatuajeBorrego}, (err, borrego)=>
+    Borrego.findOne({_tatuaje:tatuajeBorrego}, (err, borrego)=>
         {
             if (err) 
             {
@@ -89,9 +90,70 @@ function obtenerArete(req, res)
     );
 }
 
+function obtenerBorregos(req, res)
+{
+    if (req.params.page) 
+    {
+        var pagina = req.params.page;
+    } else 
+    {
+        var pagina = 1
+    }
+    var elementosPagina = 3;
+
+    Borrego.find().sort('_tatuaje').paginate(pagina, elementosPagina, (err, borregos, total)=>
+        {
+            if (err) 
+            {
+                res.status(500).send({mensaje: 'Error en la petición'});    
+            } else 
+            {
+                if (!borregos) 
+                {
+                    res.status(404).send({mensaje: 'El ganado no está registrado en la base de datos...'});
+                } else 
+                {
+                    return res.status(200).send(
+                        {
+                            elementos_total: total,
+                            borregos: borregos
+                        }
+                    );
+                }
+            }
+        }
+    );
+}
+
+function actualizarBorrego(req,res)
+{
+    var idBorrego = req.params.id;
+    var actualizar = req.body;
+
+    Borrego.findByIdAndUpdate(idBorrego, actualizar, (err, borregoActualizado)=>
+        {
+            if (err) 
+            {
+                res.status(500).send({mensaje: 'Error en la petición a la base de datos...'});
+            } else 
+            {
+                if (!borregoActualizado) 
+                {
+                    res.status(404).send({mensaje: 'No se encuentra el registro de ganado...'});    
+                } else 
+                {
+                    res.status(200).send({borrego: borregoActualizado});
+                }    
+            }
+        }
+    );
+}
+
 module.exports =
     {
         guardarBorrego,
         obtenerBorrego,
-        obtenerArete
+        obtenerBorregos,
+        obtenerTatuaje,
+        actualizarBorrego
     }
